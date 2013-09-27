@@ -45,13 +45,13 @@ class Board
   def assign_cells
     inc = 0
     while inc < initial_live_cells do
+      # TODO generate random number here not an array
       x_coord = (0..@columns).to_a.sample
       y_coord = (0..@rows).to_a.sample
+      # Todo fix this piece
       cell = Board.find_cell_by_coords([x_coord, y_coord], @cells)
       unless cell.alive?
-        @cells.delete(cell)
         cell.state = 'alive'
-        @cells << cell
         inc += 1
       end
     end
@@ -62,6 +62,7 @@ class Board
     board = []
     (0..@rows).each do |row|
       (0..@columns).each do |column|
+        # do a .find to search for that specific cell
         cell =  cells_coords.include?([column, row]) ? 'x' : '.'
         board << cell
       end
@@ -82,6 +83,9 @@ class Board
       adjacent_cells = [[cell.x_coord - 1, cell.y_coord + 1], [cell.x_coord, cell.y_coord + 1], [cell.x_coord + 1, cell.y_coord + 1],
                        [cell.x_coord - 1, cell.y_coord],                                       [cell.x_coord + 1, cell.y_coord],
                        [cell.x_coord - 1, cell.y_coord - 1], [cell.x_coord, cell.y_coord - 1], [cell.x_coord + 1, cell.y_coord - 1]]
+      adjacent_cells.delete_if { |cell| (cell[0] < 0 or cell[0] > @rows) }
+      adjacent_cells.delete_if { |cell| (cell[1] < 0 or cell[1] > @columns) }
+      # user cell #find to get state and sum the live eighbors
       cell.neighbors_count = (live_cells_coords & adjacent_cells).count
 
     end
@@ -234,5 +238,5 @@ describe 'game of life' do
   end
 end
 
-b = Board.new(40,40, 0.15)
+b = Board.new(40,40,0.15)
 b.start
