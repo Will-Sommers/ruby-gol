@@ -11,28 +11,46 @@ class Board
   end
 
   def start
+    i = 0
     assign_cells
     board = place_cells_on_board
-    puts board
     draw_board(board)
+    loop do
+      board = place_cells_on_board
+      draw_board(board)
+      assign_neighbors_to_cells
+      get_new_board
+      puts "#{i/5} seconds, #{live_cells.count} live cells"
+      i += 1
+      sleep 0.2
+    end
   end
 
   def make_blank_board
     (0..@rows).each do |row|
       (0..@columns).each do |column|
-        @cells << Cell.new(row, column)
+        cell = Cell.new(row, column)
+        @cells << cell
       end
     end
   end
 
+  def get_new_board
+    new_cells = []
+    @cells.each do |c|
+       new_state = c.determine_next_state
+       c.state = new_state
+       new_cells << c
+    end
+    @cells = new_cells
+  end
+
   def assign_cells
     inc = 0
-    initial_cells = (area * @density).to_i
-
-    while inc < initial_cells do
-      x_coord = (0..columns).to_a.sample
-      y_coord = (0..rows).to_a.sample
-      cell = Board.find_cell_by_coords([x_coord, y_coord])
+    while inc < initial_live_cells do
+      x_coord = (0..@columns).to_a.sample
+      y_coord = (0..@rows).to_a.sample
+      cell = Board.find_cell_by_coords([x_coord, y_coord], @cells)
       unless cell.alive?
         @cells.delete(cell)
         cell.state = 'alive'
@@ -43,7 +61,7 @@ class Board
   end
 
   def place_cells_on_board
-    cells_coords = @cells.map { |cell| [cell.x_coord, cell.y_coord] }
+    cells_coords = live_cells.map { |cell| [cell.x_coord, cell.y_coord] }
     board = []
     (0..@rows).each do |row|
       (0..@columns).each do |column|
@@ -67,17 +85,29 @@ class Board
       adjacent_cells = [[cell.x_coord - 1, cell.y_coord + 1], [cell.x_coord, cell.y_coord + 1], [cell.x_coord + 1, cell.y_coord + 1],
                        [cell.x_coord - 1, cell.y_coord],                                       [cell.x_coord + 1, cell.y_coord],
                        [cell.x_coord - 1, cell.y_coord - 1], [cell.x_coord, cell.y_coord - 1], [cell.x_coord + 1, cell.y_coord - 1]]
+      cell.neighbors_count = (live_cells.map { |cell| [cell.x_coord, cell.y_coord]} & adjacent_cells).count
 
-      cell.neighbors_count = (@cells.map { |cell| [cell.x_coord, cell.y_coord]} & adjacent_cells).count
     end
   end
 
-  def area
-    rows * columns
+  def total_cells
+    @cells.count
   end
 
-  def find_cell_by_coords(coords)
-    @cells.select { |cell| [cell.x_coord, cell.y_coord] & [coords] }
+  def initial_live_cells
+    (total_cells * @density).to_i
+  end
+
+  def live_cells
+    @cells.select { |c| c.state == 'alive' }
+  end
+
+  def dead_cells
+    @cells.select { |c| c.state == 'dead' }
+  end
+
+  def self.find_cell_by_coords(coords, cells)
+    cells.select { |cell| [cell.x_coord, cell.y_coord] == coords }.first
   end
 end
 
@@ -91,27 +121,29 @@ class Cell
     @state = state
   end
 
+
   def determine_next_state
     if self.alive?
       case
       when @neighbors_count < 2
         self.state = 'dead'
       when @neighbors_count == (2 || 3)
-        self.state = 'live'
+        self.state = 'alive'
       when @neighbors_count > 3
         self.state = 'dead'
       end
     elsif self.dead?
       if @neighbors_count == 3
-        self.state = 'live'
+        self.state = 'alive'
       else
         self.state = 'dead'
       end
     end
+    self.state
   end
 
   def alive?
-    self.state == 'live'
+    self.state == 'alive'
   end
 
   def dead?
@@ -132,10 +164,10 @@ describe 'game of life' do
 
     context "setup" do
 
-      it "creates the number of starting cells according the density given" do
-        initial_cells = subject.area * subject.density
+      it "creates the number of live cells according the density given" do
+        initial_cells = subject.total_cells * subject.density
         subject.assign_cells
-        expect(subject.cells.count).to eql(initial_cells.to_i)
+        expect(subject.live_cells.count).to eql(initial_cells.to_i)
       end
 
       it "correctly assigns each cell a count of its neighbors" do
@@ -144,6 +176,12 @@ describe 'game of life' do
         cell_positions.each { |x, y| subject.cells << Cell.new(x, y) }
         subject.assign_neighbors_to_cells
         expect(subject.cells.first.neighbors_count).to eql(1)
+      end
+    end
+
+    context "game mechanics" do
+      it "requires the number of live cells and dead cells to add up to total cells" do
+        expect(subject.dead_cells + subject.live_cells).to eql(subject.total_cellscount)
       end
     end
 
@@ -200,3 +238,5 @@ describe 'game of life' do
   end
 end
 
+b = Board.new(40,40, 0.15)
+b.start
