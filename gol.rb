@@ -8,17 +8,18 @@ class Board
     @density = density
     @cells = []
     make_blank_board
+    assign_cells
+    board = place_cells_on_board
+    draw_board(board)
   end
 
   def start
     i = 0
-    assign_cells
-    board = place_cells_on_board
-    draw_board(board)
     loop do
       board = place_cells_on_board
       draw_board(board)
-      assign_neighbors_to_cells
+      live_cells_coords = live_cells.map { |cell| [cell.x_coord, cell.y_coord] }
+      assign_neighbors_to_cells(live_cells_coords)
       get_new_board
       puts "#{i/5} seconds, #{live_cells.count} live cells"
       i += 1
@@ -36,13 +37,9 @@ class Board
   end
 
   def get_new_board
-    new_cells = []
     @cells.each do |c|
-       new_state = c.determine_next_state
-       c.state = new_state
-       new_cells << c
+       c.determine_next_state
     end
-    @cells = new_cells
   end
 
   def assign_cells
@@ -79,13 +76,13 @@ class Board
     print board
   end
 
-  def assign_neighbors_to_cells
+  def assign_neighbors_to_cells(live_cells_coords)
     @cells.each do |cell|
 
       adjacent_cells = [[cell.x_coord - 1, cell.y_coord + 1], [cell.x_coord, cell.y_coord + 1], [cell.x_coord + 1, cell.y_coord + 1],
                        [cell.x_coord - 1, cell.y_coord],                                       [cell.x_coord + 1, cell.y_coord],
                        [cell.x_coord - 1, cell.y_coord - 1], [cell.x_coord, cell.y_coord - 1], [cell.x_coord + 1, cell.y_coord - 1]]
-      cell.neighbors_count = (live_cells.map { |cell| [cell.x_coord, cell.y_coord]} & adjacent_cells).count
+      cell.neighbors_count = (live_cells_coords & adjacent_cells).count
 
     end
   end
@@ -139,7 +136,6 @@ class Cell
         self.state = 'dead'
       end
     end
-    self.state
   end
 
   def alive?
