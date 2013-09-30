@@ -61,13 +61,14 @@ class Board
 
   def place_cells_on_board(live_cells_coords)
     board = []
-    (0...@rows).each do |row|
-      (0...@columns).each do |column|
-        # do a .find to search for that specific cell
-        cell =  live_cells_coords.include?([column, row]) ? 'x' : '.'
-        board << cell
+    starting_row = 0
+    cells.each do |c|
+      if c.x_coord == starting_row + 1
+        starting_row += 1
+        board << "\n"
       end
-      board << "\n"
+      cell = c.alive? ? 'x' : '.'
+      board << cell
     end
     board.join
   end
