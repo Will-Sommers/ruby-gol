@@ -3,13 +3,12 @@ class Board
   attr_accessor :rows, :columns, :density, :cells
 
   def initialize(rows, columns, density)
-    @rows = rows - 1
-    @columns = columns - 1
+    @rows = rows
+    @columns = columns
     @density = density
     @cells = []
     make_blank_board
     assign_cells
-
     live_cells_coords = live_cells.map { |cell| [cell.x_coord, cell.y_coord] }
     board = place_cells_on_board(live_cells_coords)
     draw_board(board)
@@ -31,8 +30,8 @@ class Board
   end
 
   def make_blank_board
-    (0..@rows).each do |row|
-      (0..@columns).each do |column|
+    (0...@rows).each do |row|
+      (0...@columns).each do |column|
         cell = Cell.new(row, column)
         @cells << cell
       end
@@ -49,8 +48,8 @@ class Board
     inc = 0
     while inc < initial_live_cells do
       # TODO generate random number here not an array
-      x_coord = Random.rand(0..@columns)
-      y_coord = Random.rand(0..@rows)
+      x_coord = Random.rand(0...@columns)
+      y_coord = Random.rand(0...@rows)
       # Todo fix this piece
       cell = Board.find_cell_by_coords([x_coord, y_coord], @cells)
       unless cell.alive?
@@ -62,8 +61,8 @@ class Board
 
   def place_cells_on_board(live_cells_coords)
     board = []
-    (0..@rows).each do |row|
-      (0..@columns).each do |column|
+    (0...@rows).each do |row|
+      (0...@columns).each do |column|
         # do a .find to search for that specific cell
         cell =  live_cells_coords.include?([column, row]) ? 'x' : '.'
         board << cell
