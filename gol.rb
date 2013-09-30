@@ -9,16 +9,19 @@ class Board
     @cells = []
     make_blank_board
     assign_cells
-    board = place_cells_on_board
+
+    live_cells_coords = live_cells.map { |cell| [cell.x_coord, cell.y_coord] }
+    board = place_cells_on_board(live_cells_coords)
     draw_board(board)
   end
 
   def start
     i = 0
     loop do
-      board = place_cells_on_board
-      draw_board(board)
       live_cells_coords = live_cells.map { |cell| [cell.x_coord, cell.y_coord] }
+
+      board = place_cells_on_board(live_cells_coords)
+      draw_board(board)
       assign_neighbors_to_cells(live_cells_coords)
       get_new_board
       puts "#{i/5} seconds, #{live_cells.count} live cells"
@@ -46,8 +49,8 @@ class Board
     inc = 0
     while inc < initial_live_cells do
       # TODO generate random number here not an array
-      x_coord = (0..@columns).to_a.sample
-      y_coord = (0..@rows).to_a.sample
+      x_coord = Random.rand(0..@columns)
+      y_coord = Random.rand(0..@rows)
       # Todo fix this piece
       cell = Board.find_cell_by_coords([x_coord, y_coord], @cells)
       unless cell.alive?
@@ -57,13 +60,12 @@ class Board
     end
   end
 
-  def place_cells_on_board
-    cells_coords = live_cells.map { |cell| [cell.x_coord, cell.y_coord] }
+  def place_cells_on_board(live_cells_coords)
     board = []
     (0..@rows).each do |row|
       (0..@columns).each do |column|
         # do a .find to search for that specific cell
-        cell =  cells_coords.include?([column, row]) ? 'x' : '.'
+        cell =  live_cells_coords.include?([column, row]) ? 'x' : '.'
         board << cell
       end
       board << "\n"
@@ -108,7 +110,7 @@ class Board
   end
 
   def self.find_cell_by_coords(coords, cells)
-    cells.select { |cell| [cell.x_coord, cell.y_coord] == coords }.first
+    cells.find { |cell| [cell.x_coord, cell.y_coord] == coords }
   end
 end
 
@@ -238,5 +240,3 @@ describe 'game of life' do
   end
 end
 
-b = Board.new(40,40,0.15)
-b.start
