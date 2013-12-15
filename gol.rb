@@ -46,8 +46,8 @@ class Board
 
   def get_new_board
     @cells.each do |c|
-       c = c[1]
-       c.determine_next_state
+       cell = c[1]
+       cell.determine_next_state
     end
   end
 
@@ -75,8 +75,10 @@ class Board
   def assign_neighbors_to_cells
     @cells.each do |cell|
       cell = cell[1]
+
       adjacent_cells = cell.adjacent_cells(@cells)
       adjacent_cells = adjacent_cells.select { |x, y| x >= 0 && (x < self.columns) && y >= 0 && (y < self.rows) }
+
       cell.neighbors_count = adjacent_cells.select { |c|
         hash_position = c.join("-").to_sym
         @cells[hash_position].state == 'alive'
@@ -93,11 +95,7 @@ class Board
   end
 
   def live_cells
-    @cells.select { |c| @cells[c].state == 'alive' }
-  end
-
-  def dead_cells
-    @cells.select { |c| c.state == 'dead' }
+    @cells.select { |c| @cells[c].alive? }
   end
 
   def self.find_cell_by_coords(coords, cells)
