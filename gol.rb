@@ -21,7 +21,7 @@ class Board
       assign_neighbors_to_cells
       get_new_board
       puts
-      puts "#{i/5} seconds, #{live_cells.count} live cells"
+      puts "#{i/5} turn, #{live_cells.count} live cells"
       i += 1
       sleep 0.2
     end
@@ -155,7 +155,7 @@ end
 
 
 
-board = Board.new(20,50, 0.5)
+board = Board.new(30,80, 0.5)
 board.start
 
 require 'rspec'
