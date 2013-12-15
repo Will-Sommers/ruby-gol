@@ -36,9 +36,9 @@ class Board
     end
     (0...@rows).each do |row|
       (0...@columns).each do |column|
-        state = cell_arr.include?([row, column]) ? 'alive' : 'dead'
-        cell = Cell.new(row, column, state)
-        pos = (row.to_s + "-" + column.to_s).to_sym
+        state = cell_arr.include?([column, row]) ? 'alive' : 'dead'
+        cell = Cell.new(column, row, state)
+        pos = (column.to_s + "-" + row.to_s).to_sym
         @cells[pos] = cell
       end
     end
@@ -55,7 +55,7 @@ class Board
     board = []
     starting_row = 0
     cells.each do |c|
-      if c[1].x_coord == starting_row + 1
+      if c[1].y_coord == starting_row + 1
         starting_row += 1
         board << "\n"
       end
@@ -75,6 +75,7 @@ class Board
     @cells.each do |cell|
       cell = cell[1]
       adjacent_cells = cell.adjacent_cells(@cells)
+      adjacent_cells = adjacent_cells.select { |x, y| x >= 0 && (x < self.columns) && y >= 0 && (y < self.rows) }
       cell.neighbors_count = adjacent_cells.select { |c|
         hash_position = c.join("-").to_sym
         @cells[hash_position].state == 'alive'
@@ -140,7 +141,7 @@ class Cell
     cells = [[x_coord - 1, y_coord + 1], [x_coord, y_coord + 1], [x_coord + 1, y_coord + 1],
             [x_coord - 1, y_coord],                             [x_coord + 1, y_coord],
             [x_coord - 1, y_coord - 1], [x_coord, y_coord - 1], [x_coord + 1, y_coord - 1]]
-    return cells.select { |x, y| x > 0 && x < 19 && y > 0 && y < 19 }
+    return cells
   end
 
   def alive?
