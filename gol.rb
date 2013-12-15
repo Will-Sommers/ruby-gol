@@ -55,11 +55,12 @@ class Board
     board = []
     starting_row = 0
     cells.each do |c|
-      if c[1].y_coord == starting_row + 1
+      cell = c[1]
+      if cell.y_coord == starting_row + 1
         starting_row += 1
         board << "\n"
       end
-      cell = c[1].alive? ? 'x' : '.'
+      cell = cell.alive? ? 'x' : '.'
       board << cell
     end
     board.join
