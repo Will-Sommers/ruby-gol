@@ -1,3 +1,4 @@
+require 'pry'
 class Board
 
   attr_accessor :rows, :columns, :density, :cells
@@ -6,68 +7,59 @@ class Board
     @rows = rows
     @columns = columns
     @density = density
-    @cells = []
-    make_blank_board
-    assign_cells
-    live_cells_coords = live_cells.map { |cell| [cell.x_coord, cell.y_coord] }
-    board = place_cells_on_board(live_cells_coords)
+    @cells = {}
+    make_board
+    board = place_cells_on_board
     draw_board(board)
   end
 
   def start
     i = 0
     loop do
-      live_cells_coords = live_cells.map { |cell| [cell.x_coord, cell.y_coord] }
-
-      board = place_cells_on_board(live_cells_coords)
+      board = place_cells_on_board
       draw_board(board)
-      assign_neighbors_to_cells(live_cells_coords)
+      assign_neighbors_to_cells
       get_new_board
+      puts
       puts "#{i/5} seconds, #{live_cells.count} live cells"
       i += 1
       sleep 0.2
     end
   end
 
-  def make_blank_board
+  def make_board
+    cell_arr = []
+    while cell_arr.size < initial_live_cells
+      x_coord = Random.rand(0...@columns)
+      y_coord = Random.rand(0...@rows)
+      cell_arr << [x_coord, y_coord] unless cell_arr.include?([x_coord, y_coord])
+    end
     (0...@rows).each do |row|
       (0...@columns).each do |column|
-        cell = Cell.new(row, column)
-        @cells << cell
+        state = cell_arr.include?([row, column]) ? 'alive' : 'dead'
+        cell = Cell.new(row, column, state)
+        pos = (row.to_s + "-" + column.to_s).to_sym
+        @cells[pos] = cell
       end
     end
   end
 
   def get_new_board
     @cells.each do |c|
+       c = c[1]
        c.determine_next_state
     end
   end
 
-  def assign_cells
-    inc = 0
-    while inc < initial_live_cells do
-      # TODO generate random number here not an array
-      x_coord = Random.rand(0...@columns)
-      y_coord = Random.rand(0...@rows)
-      # Todo fix this piece
-      cell = Board.find_cell_by_coords([x_coord, y_coord], @cells)
-      unless cell.alive?
-        cell.state = 'alive'
-        inc += 1
-      end
-    end
-  end
-
-  def place_cells_on_board(live_cells_coords)
+  def place_cells_on_board
     board = []
     starting_row = 0
     cells.each do |c|
-      if c.x_coord == starting_row + 1
+      if c[1].x_coord == starting_row + 1
         starting_row += 1
         board << "\n"
       end
-      cell = c.alive? ? 'x' : '.'
+      cell = c[1].alive? ? 'x' : '.'
       board << cell
     end
     board.join
@@ -79,22 +71,19 @@ class Board
     print board
   end
 
-  def assign_neighbors_to_cells(live_cells_coords)
+  def assign_neighbors_to_cells
     @cells.each do |cell|
-
-      adjacent_cells = [[cell.x_coord - 1, cell.y_coord + 1], [cell.x_coord, cell.y_coord + 1], [cell.x_coord + 1, cell.y_coord + 1],
-                       [cell.x_coord - 1, cell.y_coord],                                       [cell.x_coord + 1, cell.y_coord],
-                       [cell.x_coord - 1, cell.y_coord - 1], [cell.x_coord, cell.y_coord - 1], [cell.x_coord + 1, cell.y_coord - 1]]
-      adjacent_cells.delete_if { |cell| (cell[0] < 0 or cell[0] > @rows) }
-      adjacent_cells.delete_if { |cell| (cell[1] < 0 or cell[1] > @columns) }
-      # user cell #find to get state and sum the live eighbors
-      cell.neighbors_count = (live_cells_coords & adjacent_cells).count
-
+      cell = cell[1]
+      adjacent_cells = cell.adjacent_cells(@cells)
+      cell.neighbors_count = adjacent_cells.select { |c|
+        hash_position = c.join("-").to_sym
+        @cells[hash_position].state == 'alive'
+      }.count
     end
   end
 
   def total_cells
-    @cells.count
+    @rows * @columns
   end
 
   def initial_live_cells
@@ -102,7 +91,7 @@ class Board
   end
 
   def live_cells
-    @cells.select { |c| c.state == 'alive' }
+    @cells.select { |c| @cells[c].state == 'alive' }
   end
 
   def dead_cells
@@ -110,7 +99,10 @@ class Board
   end
 
   def self.find_cell_by_coords(coords, cells)
-    cells.find { |cell| [cell.x_coord, cell.y_coord] == coords }
+    cells.find do |cell|
+      cell = cell[1]
+      [cell.x_coord, cell.y_coord] == coords
+    end
   end
 end
 
@@ -118,7 +110,7 @@ class Cell
 
   attr_accessor :x_coord, :y_coord, :state, :neighbors_count
 
-  def initialize(x_coord, y_coord, state='dead' )
+  def initialize(x_coord, y_coord, state)
     @x_coord = x_coord
     @y_coord = y_coord
     @state = state
@@ -144,15 +136,26 @@ class Cell
     end
   end
 
+  def adjacent_cells(cells)
+    cells = [[x_coord - 1, y_coord + 1], [x_coord, y_coord + 1], [x_coord + 1, y_coord + 1],
+            [x_coord - 1, y_coord],                             [x_coord + 1, y_coord],
+            [x_coord - 1, y_coord - 1], [x_coord, y_coord - 1], [x_coord + 1, y_coord - 1]]
+    return cells.select { |x, y| x > 0 && x < 19 && y > 0 && y < 19 }
+  end
+
   def alive?
-    self.state == 'alive'
+    state == 'alive'
   end
 
   def dead?
-    self.state == 'dead'
+    !self.alive?
   end
 end
 
+
+
+board = Board.new(20,50, 0.5)
+board.start
 
 require 'rspec'
 
@@ -239,4 +242,5 @@ describe 'game of life' do
     end
   end
 end
+
 
