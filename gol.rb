@@ -120,28 +120,21 @@ class Cell
 
   def determine_next_state
     if self.alive?
-      determine_live_cell_state
+      possibly_change_live_cell_state
     elsif self.dead?
-      determine_dead_cell_state
+      possibly_change_dead_cell_state
     end
   end
 
-  def determine_live_cell_state
-    case
-    when @neighbors_count < 2
-      self.state = 'dead'
-    when @neighbors_count == (2 || 3)
-      self.state = 'alive'
-    when @neighbors_count > 3
+  def possibly_change_live_cell_state
+    if @neighbors_count < 2 || @neighbors_count > 3
       self.state = 'dead'
     end
   end
 
-  def determine_dead_cell_state
+  def possibly_change_dead_cell_state
     if @neighbors_count == 3
       self.state = 'alive'
-    else
-      self.state = 'dead'
     end
   end
 
