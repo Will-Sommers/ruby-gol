@@ -121,7 +121,7 @@ class Cell
   def determine_next_state
     if self.alive?
       possibly_change_live_cell_state
-    elsif self.dead?
+    else
       possibly_change_dead_cell_state
     end
   end
