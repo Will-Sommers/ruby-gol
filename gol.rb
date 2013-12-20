@@ -14,14 +14,15 @@ class Board
   end
 
   def start
-    i = 0
+    i = 1
     loop do
       board = place_cells_on_board
       draw_board(board)
       assign_neighbors_to_cells
       get_new_board
       puts
-      puts "#{i/5} turn, #{live_cells.count} live cells"
+      i_str = i.to_s + " "
+      puts "#{i > 1 ? i_str + 'turns' : i_str + 'turn'} /  #{live_cells.count} live cells"
       i += 1
       sleep 0.2
     end
