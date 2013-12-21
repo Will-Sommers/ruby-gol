@@ -69,7 +69,8 @@ class Board
 
   def draw_game_state_information(i)
     i_str = i.to_s + " "
-    puts "\n #{i > 1 ? i_str + 'turns' : i_str + 'turn'} /  #{live_cells.count} live cells"
+    i_str = i > 1 ? i_str + 'turns' : i_str + 'turn'
+    puts "\n #{i_str} /  #{live_cells.count} live cells"
   end
 
   def print_board
