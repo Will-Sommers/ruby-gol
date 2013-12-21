@@ -8,11 +8,15 @@ class Board
     @columns = columns
     @density = density
     @cells = {}
-    make_board
-    print_board
   end
 
   def start
+    make_board
+    print_board
+    run_game_loop
+  end
+
+  def run_game_loop
     i = 1
     loop do
       draw_next_board
@@ -41,8 +45,12 @@ class Board
 
   def get_new_board
     @cells.each do |c|
-       cell = c[1]
-       cell.determine_next_state
+      cell = c[1]
+      cell.determine_next_state
+    end
+    @cells.each do |c|
+      cell = c[1]
+      cell.state = cell.next_state
     end
   end
 
@@ -109,7 +117,7 @@ end
 
 class Cell
 
-  attr_accessor :x_coord, :y_coord, :state, :neighbors_count
+  attr_accessor :x_coord, :y_coord, :state, :neighbors_count, :next_state
 
   def initialize(x_coord, y_coord, state)
     @x_coord = x_coord
@@ -128,13 +136,17 @@ class Cell
 
   def possibly_change_live_cell_state
     if @neighbors_count < 2 || @neighbors_count > 3
-      self.state = 'dead'
+      self.next_state = 'dead'
+    else
+      self.next_state = self.state
     end
   end
 
   def possibly_change_dead_cell_state
     if @neighbors_count == 3
-      self.state = 'alive'
+      self.next_state = 'alive'
+    else
+      self.next_state = self.state
     end
   end
 
