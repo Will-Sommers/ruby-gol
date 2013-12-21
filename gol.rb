@@ -16,9 +16,7 @@ class Board
     i = 1
     loop do
       draw_next_board
-      puts
-      i_str = i.to_s + " "
-      puts "#{i > 1 ? i_str + 'turns' : i_str + 'turn'} /  #{live_cells.count} live cells"
+      draw_game_state_information(i)
       i += 1
       sleep 0.2
     end
@@ -67,6 +65,11 @@ class Board
     print_board
     assign_neighbors_to_cells
     get_new_board
+  end
+
+  def draw_game_state_information(i)
+    i_str = i.to_s + " "
+    puts "\n #{i > 1 ? i_str + 'turns' : i_str + 'turn'} /  #{live_cells.count} live cells"
   end
 
   def print_board
