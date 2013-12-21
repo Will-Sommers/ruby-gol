@@ -92,10 +92,10 @@ class Board
     @cells.each do |cell|
       cell = cell[1]
 
-      adjacent_cells = cell.adjacent_cell_coords(@cells)
-      adjacent_cells = adjacent_cells.select { |x, y| x >= 0 && (x < self.columns) && y >= 0 && (y < self.rows) }
+      adjacent_coords = cell.adjacent_cells_coords
+      adjacent_coords = adjacent_coords.select { |x, y| x >= 0 && (x < self.columns) && y >= 0 && (y < self.rows) }
 
-      cell.neighbors_count = adjacent_cells.select { |c|
+      cell.neighbors_count = adjacent_coords.select { |c|
           hash_position = c.join("-").to_sym
           @cells[hash_position].state == 'alive'
         }.count
@@ -153,7 +153,7 @@ class Cell
     end
   end
 
-  def adjacent_cell_coords(cells)
+  def adjacent_cells_coords
     cells = [[x_coord - 1, y_coord + 1], [x_coord, y_coord + 1], [x_coord + 1, y_coord + 1],
             [x_coord - 1, y_coord],                             [x_coord + 1, y_coord],
             [x_coord - 1, y_coord - 1], [x_coord, y_coord - 1], [x_coord + 1, y_coord - 1]]
