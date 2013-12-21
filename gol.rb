@@ -9,17 +9,13 @@ class Board
     @density = density
     @cells = {}
     make_board
-    board = place_cells_on_board
-    draw_board(board)
+    print_board
   end
 
   def start
     i = 1
     loop do
-      board = place_cells_on_board
-      draw_board(board)
-      assign_neighbors_to_cells
-      get_new_board
+      draw_next_board
       puts
       i_str = i.to_s + " "
       puts "#{i > 1 ? i_str + 'turns' : i_str + 'turn'} /  #{live_cells.count} live cells"
@@ -67,8 +63,15 @@ class Board
     board.join
   end
 
-  def draw_board(board)
+  def draw_next_board
+    print_board
+    assign_neighbors_to_cells
+    get_new_board
+  end
+
+  def print_board
     # Clears the terminal -- hacky
+    board = place_cells_on_board
     puts "\e[H\e[2J"
     print board
   end
@@ -81,9 +84,9 @@ class Board
       adjacent_cells = adjacent_cells.select { |x, y| x >= 0 && (x < self.columns) && y >= 0 && (y < self.rows) }
 
       cell.neighbors_count = adjacent_cells.select { |c|
-        hash_position = c.join("-").to_sym
-        @cells[hash_position].state == 'alive'
-      }.count
+          hash_position = c.join("-").to_sym
+          @cells[hash_position].state == 'alive'
+        }.count
     end
   end
 
