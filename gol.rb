@@ -50,7 +50,7 @@ class Board
     end
     @cells.each do |c|
       cell = c[1]
-      cell.state = cell.next_state
+      cell.assign_next_state
     end
   end
 
@@ -92,7 +92,7 @@ class Board
     @cells.each do |cell|
       cell = cell[1]
 
-      adjacent_cells = cell.adjacent_cells(@cells)
+      adjacent_cells = cell.adjacent_cell_coords(@cells)
       adjacent_cells = adjacent_cells.select { |x, y| x >= 0 && (x < self.columns) && y >= 0 && (y < self.rows) }
 
       cell.neighbors_count = adjacent_cells.select { |c|
@@ -125,6 +125,9 @@ class Cell
     @state = state
   end
 
+  def assign_next_state
+    self.state = self.next_state
+  end
 
   def determine_next_state
     if self.alive?
@@ -150,7 +153,7 @@ class Cell
     end
   end
 
-  def adjacent_cells(cells)
+  def adjacent_cell_coords(cells)
     cells = [[x_coord - 1, y_coord + 1], [x_coord, y_coord + 1], [x_coord + 1, y_coord + 1],
             [x_coord - 1, y_coord],                             [x_coord + 1, y_coord],
             [x_coord - 1, y_coord - 1], [x_coord, y_coord - 1], [x_coord + 1, y_coord - 1]]
