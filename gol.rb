@@ -104,13 +104,6 @@ class Board
   def live_cells
     @cells.select { |c| @cells[c].alive? }
   end
-
-  def self.find_cell_by_coords(coords, cells)
-    cells.find do |cell|
-      cell = cell[1]
-      [cell.x_coord, cell.y_coord] == coords
-    end
-  end
 end
 
 class Cell
