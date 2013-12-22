@@ -37,8 +37,8 @@ class Board
       (0...@columns).each do |column|
         state = cell_arr.include?([column, row]) ? 'alive' : 'dead'
         cell = Cell.new(column, row, state)
-        pos = (column.to_s + "-" + row.to_s).to_sym
-        @cells[pos] = cell
+        hash_position = Board.hash_position_helper([column.to_s, row.to_s])
+        @cells[hash_position] = cell
       end
     end
   end
@@ -89,10 +89,12 @@ class Board
     @cells.each do |key, cell|
 
       adjacent_coords = cell.adjacent_cells_coords
-      adjacent_coords = adjacent_coords.select { |x, y| x >= 0 && (x < self.columns) && y >= 0 && (y < self.rows) }
+        .select { |x, y|
+                  x >= 0 && (x < self.columns) && y >= 0 && (y < self.rows)
+        }
 
       cell.neighbors_count = adjacent_coords.select { |c|
-          hash_position = c.join("-").to_sym
+          hash_position = Board.hash_position_helper(c)
           @cells[hash_position].state == 'alive'
         }.count
     end
@@ -108,6 +110,10 @@ class Board
 
   def live_cells
     @cells.select { |c| @cells[c].alive? }
+  end
+
+  def self.hash_position_helper(coords)
+    coords.join("-").to_sym
   end
 end
 
