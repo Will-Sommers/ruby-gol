@@ -90,7 +90,7 @@ class Board
   def get_live_cell_neighbor_count
     @cells.each do |key, cell|
 
-      adjacent_coords = cell.adjacent_cells_coords
+      adjacent_coords = cell.neighbors
         .select { |x, y|
           x >= 0 && (x < self.columns)
         }.select { |x, y|
@@ -120,12 +120,14 @@ end
 
 class Cell
 
-  attr_accessor :x_coord, :y_coord, :state, :neighbors_count, :next_state
+  attr_accessor :x_coord, :y_coord, :state,
+    :neighbors_count, :next_state, :neighbors
 
   def initialize(x_coord, y_coord, state)
     @x_coord = x_coord
     @y_coord = y_coord
     @state = state
+    create_neighbors
   end
 
   def assign_next_state
@@ -156,11 +158,10 @@ class Cell
     end
   end
 
-  def adjacent_cells_coords
-    cells = [[x_coord - 1, y_coord + 1], [x_coord, y_coord + 1], [x_coord + 1, y_coord + 1],
+  def create_neighbors
+    self.neighbors = [[x_coord - 1, y_coord + 1], [x_coord, y_coord + 1], [x_coord + 1, y_coord + 1],
             [x_coord - 1, y_coord],                             [x_coord + 1, y_coord],
             [x_coord - 1, y_coord - 1], [x_coord, y_coord - 1], [x_coord + 1, y_coord - 1]]
-    return cells
   end
 
   def alive?
