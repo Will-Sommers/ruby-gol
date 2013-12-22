@@ -22,7 +22,6 @@ class Board
       draw_next_board
       draw_game_state_information(i)
       i += 1
-      sleep 0.1
     end
   end
 
