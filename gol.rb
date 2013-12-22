@@ -31,10 +31,22 @@ class Board
     (0...@rows).each do |row|
       (0...@columns).each do |column|
         hash_position = Board.hash_position_helper([column.to_s, row.to_s])
+
         cell_state = live_cells.has_key?(hash_position)  ? 'alive' : 'dead'
         @cells[hash_position] = Cell.new(column, row, cell_state)
       end
     end
+  end
+
+  def place_initial_live_cells
+    live_cells = {}
+    starting_cells_count = (total_cells * @density).to_i
+
+    while live_cells.size < starting_cells_count
+      coords = [Random.rand(0...@columns), Random.rand(0...@rows)]
+      live_cells[Board.hash_position_helper(coords)] = 'alive' unless live_cells.has_key?(coords)
+    end
+    return live_cells
   end
 
   def get_next_cell_state
@@ -50,28 +62,10 @@ class Board
     end
   end
 
-  def place_initial_live_cells
-    live_cells = {}
-    starting_cells_count = (total_cells * @density).to_i
-
-    while live_cells.size < starting_cells_count
-      coords = [Random.rand(0...@columns), Random.rand(0...@rows)]
-      live_cells[Board.hash_position_helper(coords)] = 'alive' unless live_cells.has_key?(coords)
-    end
-    return live_cells
-  end
-
-  def place_cells_on_board
-    board = []
-    starting_row = 0
-    cells.each do |key, cell|
-      if cell.y_coord == starting_row + 1
-        starting_row += 1
-        board << "\n"
-      end
-      cell = cell.alive? ? 'x' : '.'
-      board << cell
-    end
+  def build_board
+    board = cells.map { |key, cell| cell = cell.alive? ? 'x' : '.' }
+    new_line_positions = (1..@columns).map { |x| x * @rows }
+    new_line_positions.map { |pos| board.insert(pos, "\n") }
     board.join
   end
 
@@ -89,7 +83,7 @@ class Board
 
   def print_board
     # Clears the terminal -- hacky
-    board = place_cells_on_board
+    board = build_board
     puts "\e[H\e[2J"
     print board
   end
@@ -181,7 +175,7 @@ end
 
 
 
-board = Board.new(30,80, 0.5)
+board = Board.new(50,50, 0.5)
 board.start
 
 require 'rspec'
