@@ -65,7 +65,7 @@ class Board
 
   def build_board
     board = cells.map { |key, cell| cell = cell.alive? ? 'x' : '.' }
-    new_line_positions = (1..@columns).map { |x| x * @rows }
+    new_line_positions = (1..@rows).map.with_index { |x, i| (x * @columns) + i }
     new_line_positions.map { |pos| board.insert(pos, "\n") }
     board.join
   end
@@ -177,7 +177,7 @@ end
 
 
 
-board = Board.new(50, 50, 0.5)
+board = Board.new(30, 80, 0.5)
 board.start
 
 require 'rspec'
