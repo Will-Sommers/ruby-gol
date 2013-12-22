@@ -22,6 +22,7 @@ class Board
       draw_next_board
       draw_game_state_information(i)
       i += 1
+      sleep 0.1
     end
   end
 
@@ -32,7 +33,7 @@ class Board
         hash_position = Board.hash_position_helper([column.to_s, row.to_s])
 
         cell_state = live_cells.has_key?(hash_position)  ? 'alive' : 'dead'
-        @cells[hash_position] = Cell.new(column, row, cell_state)
+        @cells[hash_position] = Cell.new(column, row, cell_state, self)
       end
     end
   end
@@ -90,16 +91,7 @@ class Board
   def get_live_cell_neighbor_count
     @cells.each do |key, cell|
 
-      adjacent_coords = cell.neighbors
-        .select { |x, y|
-          x >= 0 && (x < self.columns)
-        }.select { |x, y|
-          y >= 0 && (y < self.rows)
-        }.map {
-          |coords| Board.hash_position_helper(coords) }
-
-
-      cell.neighbors_count = adjacent_coords.select { |cell_position|
+      cell.live_neighbors_count = cell.neighbors.select { |cell_position|
           @cells[cell_position].state == 'alive'
         }.count
     end
@@ -121,13 +113,15 @@ end
 class Cell
 
   attr_accessor :x_coord, :y_coord, :state,
-    :neighbors_count, :next_state, :neighbors
+    :live_neighbors_count, :next_state, :neighbors,
+    :board
 
-  def initialize(x_coord, y_coord, state)
+  def initialize(x_coord, y_coord, state, board)
     @x_coord = x_coord
     @y_coord = y_coord
     @state = state
-    create_neighbors
+    @board = board
+    find_and_store_neighbors
   end
 
   def assign_next_state
@@ -143,7 +137,7 @@ class Cell
   end
 
   def possibly_change_live_cell_state
-    if @neighbors_count < 2 || @neighbors_count > 3
+    if @live_neighbors_count < 2 || @live_neighbors_count > 3
       self.next_state = 'dead'
     else
       self.next_state = self.state
@@ -151,17 +145,26 @@ class Cell
   end
 
   def possibly_change_dead_cell_state
-    if @neighbors_count == 3
+    if @live_neighbors_count == 3
       self.next_state = 'alive'
     else
       self.next_state = self.state
     end
   end
 
-  def create_neighbors
+  def find_and_store_neighbors
     self.neighbors = [[x_coord - 1, y_coord + 1], [x_coord, y_coord + 1], [x_coord + 1, y_coord + 1],
             [x_coord - 1, y_coord],                             [x_coord + 1, y_coord],
             [x_coord - 1, y_coord - 1], [x_coord, y_coord - 1], [x_coord + 1, y_coord - 1]]
+
+    self.neighbors = self.neighbors
+      .select { |x, y|
+        x >= 0 && (x < board.columns)
+      }.select { |x, y|
+        y >= 0 && (y < board.rows)
+      }.map {
+        |coords| Board.hash_position_helper(coords) }
+
   end
 
   def alive?
