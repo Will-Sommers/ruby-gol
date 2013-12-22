@@ -31,8 +31,8 @@ class Board
     (0...@rows).each do |row|
       (0...@columns).each do |column|
         hash_position = Board.hash_position_helper([column.to_s, row.to_s])
-        state = live_cells.has_key?(hash_position)  ? 'alive' : 'dead'
-        @cells[hash_position] = Cell.new(column, row, state)
+        cell_state = live_cells.has_key?(hash_position)  ? 'alive' : 'dead'
+        @cells[hash_position] = Cell.new(column, row, cell_state)
       end
     end
   end
