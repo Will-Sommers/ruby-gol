@@ -90,12 +90,15 @@ class Board
 
       adjacent_coords = cell.adjacent_cells_coords
         .select { |x, y|
-                  x >= 0 && (x < self.columns) && y >= 0 && (y < self.rows)
-        }
+          x >= 0 && (x < self.columns)
+        }.select { |x, y|
+          y >= 0 && (y < self.rows)
+        }.map {
+          |coords| Board.hash_position_helper(coords) }
 
-      cell.neighbors_count = adjacent_coords.select { |c|
-          hash_position = Board.hash_position_helper(c)
-          @cells[hash_position].state == 'alive'
+
+      cell.neighbors_count = adjacent_coords.select { |cell_position|
+          @cells[cell_position].state == 'alive'
         }.count
     end
   end
