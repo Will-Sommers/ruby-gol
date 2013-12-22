@@ -48,7 +48,9 @@ class Board
 
   def place_initial_live_cells
     live_cells = {}
-    while live_cells.size < initial_live_cells
+    starting_cells_count = (total_cells * @density).to_i
+
+    while live_cells.size < starting_cells_count
       coords = [Random.rand(0...@columns), Random.rand(0...@rows)]
       live_cells[Board.hash_position_helper(coords)] = 'alive' unless live_cells.has_key?(coords)
     end
@@ -108,10 +110,6 @@ class Board
 
   def total_cells
     @rows * @columns
-  end
-
-  def initial_live_cells
-    (total_cells * @density).to_i
   end
 
   def live_cells
