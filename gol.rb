@@ -27,18 +27,12 @@ class Board
   end
 
   def make_board
-    cell_arr = []
-    while cell_arr.size < initial_live_cells
-      x_coord = Random.rand(0...@columns)
-      y_coord = Random.rand(0...@rows)
-      cell_arr << [x_coord, y_coord] unless cell_arr.include?([x_coord, y_coord])
-    end
+    cell_arr = place_initial_live_cells
     (0...@rows).each do |row|
       (0...@columns).each do |column|
         state = cell_arr.include?([column, row]) ? 'alive' : 'dead'
-        cell = Cell.new(column, row, state)
         hash_position = Board.hash_position_helper([column.to_s, row.to_s])
-        @cells[hash_position] = cell
+        @cells[hash_position] = Cell.new(column, row, state)
       end
     end
   end
@@ -50,6 +44,16 @@ class Board
     @cells.each do |key, cell|
       cell.assign_next_state
     end
+  end
+
+  def place_initial_live_cells
+    arr = []
+    while arr.size < initial_live_cells
+      x_coord = Random.rand(0...@columns)
+      y_coord = Random.rand(0...@rows)
+      arr << [x_coord, y_coord] unless arr.include?([x_coord, y_coord])
+    end
+    return arr
   end
 
   def place_cells_on_board
