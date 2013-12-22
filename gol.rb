@@ -45,7 +45,7 @@ class Board
 
     while live_cells.size < starting_cells_count
       coords = [Random.rand(0...@columns), Random.rand(0...@rows)]
-      live_cells[Board.hash_position_helper(coords)] = 'alive' unless live_cells.has_key?(coords)
+      live_cells[Board.hash_position_helper(coords)] = 'alive'
     end
     return live_cells
   end
@@ -91,7 +91,6 @@ class Board
 
   def get_live_cell_neighbor_count
     @cells.each do |key, cell|
-
       cell.live_neighbors_count = cell.neighbors.select { |cell_position|
           @cells[cell_position].state == 'alive'
         }.count
