@@ -161,8 +161,9 @@ class Cell
         x >= 0 && (x < board.columns)
       }.select { |x, y|
         y >= 0 && (y < board.rows)
-      }.map {
-        |coords| Board.hash_position_helper(coords) }
+      }.map { |coords|
+        Board.hash_position_helper(coords)
+      }
 
   end
 
@@ -177,7 +178,7 @@ end
 
 
 
-board = Board.new(30, 80, 0.5)
+board = Board.new(40, 160, 0.5)
 board.start
 
 require 'rspec'
