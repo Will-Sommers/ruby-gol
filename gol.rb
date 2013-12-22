@@ -44,12 +44,10 @@ class Board
   end
 
   def get_new_board
-    @cells.each do |c|
-      cell = c[1]
+    @cells.each do |key, cell|
       cell.determine_next_state
     end
-    @cells.each do |c|
-      cell = c[1]
+    @cells.each do |key, cell|
       cell.assign_next_state
     end
   end
@@ -57,8 +55,7 @@ class Board
   def place_cells_on_board
     board = []
     starting_row = 0
-    cells.each do |c|
-      cell = c[1]
+    cells.each do |key, cell|
       if cell.y_coord == starting_row + 1
         starting_row += 1
         board << "\n"
@@ -89,8 +86,7 @@ class Board
   end
 
   def assign_neighbors_to_cells
-    @cells.each do |cell|
-      cell = cell[1]
+    @cells.each do |key, cell|
 
       adjacent_coords = cell.adjacent_cells_coords
       adjacent_coords = adjacent_coords.select { |x, y| x >= 0 && (x < self.columns) && y >= 0 && (y < self.rows) }
