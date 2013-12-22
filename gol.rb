@@ -1,7 +1,7 @@
 require 'pry'
 class Board
 
-  attr_accessor :rows, :columns, :density, :cells
+  attr_accessor :rows, :columns, :density, :cells, :live_cell_count
 
   def initialize(rows, columns, density)
     @rows = rows
@@ -41,6 +41,7 @@ class Board
   def place_initial_live_cells
     live_cells = {}
     starting_cells_count = (total_cells * @density).to_i
+    self.live_cell_count = starting_cells_count
 
     while live_cells.size < starting_cells_count
       coords = [Random.rand(0...@columns), Random.rand(0...@rows)]
@@ -78,7 +79,7 @@ class Board
   def draw_game_state_information(i)
     i_str = i.to_s + " "
     i_str = i > 1 ? i_str + 'turns' : i_str + 'turn'
-    puts "\n #{i_str} /  #{live_cells.count} live cells"
+    puts "\n #{i_str} /  #{live_cell_count} live cells"
   end
 
   def print_board
@@ -99,10 +100,6 @@ class Board
 
   def total_cells
     @rows * @columns
-  end
-
-  def live_cells
-    @cells.select { |c| @cells[c].alive? }
   end
 
   def self.hash_position_helper(coords)
@@ -139,6 +136,7 @@ class Cell
   def possibly_change_live_cell_state
     if @live_neighbors_count < 2 || @live_neighbors_count > 3
       self.next_state = 'dead'
+      self.board.live_cell_count -= 1
     else
       self.next_state = self.state
     end
@@ -147,6 +145,7 @@ class Cell
   def possibly_change_dead_cell_state
     if @live_neighbors_count == 3
       self.next_state = 'alive'
+      self.board.live_cell_count += 1
     else
       self.next_state = self.state
     end
@@ -178,7 +177,7 @@ end
 
 
 
-board = Board.new(50,50, 0.5)
+board = Board.new(50, 50, 0.5)
 board.start
 
 require 'rspec'
