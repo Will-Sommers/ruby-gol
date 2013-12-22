@@ -33,7 +33,7 @@ class Board
         hash_position = Board.hash_position_helper([column.to_s, row.to_s])
 
         cell_state = live_cells.has_key?(hash_position)  ? 'alive' : 'dead'
-        @cells[hash_position] = Cell.new(column, row, cell_state, self)
+        @cells[hash_position] = Cell.new({:x => column, :y => row}, cell_state, self)
       end
     end
   end
@@ -116,9 +116,9 @@ class Cell
     :live_neighbors_count, :next_state, :neighbors,
     :board
 
-  def initialize(x_coord, y_coord, state, board)
-    @x_coord = x_coord
-    @y_coord = y_coord
+  def initialize(coords, state, board)
+    @x_coord = coords[:x]
+    @y_coord = coords[:y]
     @state = state
     @board = board
     find_and_store_neighbors
