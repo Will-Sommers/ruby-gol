@@ -37,10 +37,14 @@ class Board
     end
   end
 
-  def get_new_board
+  def get_next_cell_state
+    get_live_cell_neighbor_count
     @cells.each do |key, cell|
       cell.determine_next_state
     end
+  end
+
+  def assign_next_state_to_cells
     @cells.each do |key, cell|
       cell.assign_next_state
     end
@@ -72,9 +76,9 @@ class Board
   end
 
   def draw_next_board
+    get_next_cell_state
+    assign_next_state_to_cells
     print_board
-    assign_neighbors_to_cells
-    get_new_board
   end
 
   def draw_game_state_information(i)
@@ -90,7 +94,7 @@ class Board
     print board
   end
 
-  def assign_neighbors_to_cells
+  def get_live_cell_neighbor_count
     @cells.each do |key, cell|
 
       adjacent_coords = cell.adjacent_cells_coords
