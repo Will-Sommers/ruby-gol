@@ -1,4 +1,19 @@
 require 'pry'
+
+
+class Game
+  def initialize
+    puts "Enter number of rows(0-50 is best)"
+    row = gets.chomp.to_i
+    puts "Enter number of columns(0-100 is best)"
+    columns = gets.chomp.to_i
+
+    board = Board.new(row, columns, 0.5)
+    board.start
+  end
+end
+
+
 class Board
 
   attr_accessor :rows, :columns, :density, :cells, :live_cell_count
@@ -176,9 +191,7 @@ class Cell
 end
 
 
-
-board = Board.new(40, 160, 0.5)
-board.start
+Game.new()
 
 require 'rspec'
 
