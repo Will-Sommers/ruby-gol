@@ -11,7 +11,7 @@ class Board
   end
 
   def start
-    make_board
+    initialize_board
     print_board
     run_game_loop
   end
@@ -26,13 +26,13 @@ class Board
     end
   end
 
-  def make_board
-    live_cells = place_initial_live_cells
+  def initialize_board
+    initial_live_cells = place_initial_live_cells
     (0...@rows).each do |row|
       (0...@columns).each do |column|
         hash_position = Board.hash_position_helper([column.to_s, row.to_s])
 
-        cell_state = live_cells.has_key?(hash_position)  ? 'alive' : 'dead'
+        cell_state = initial_live_cells.has_key?(hash_position)  ? 'alive' : 'dead'
         @cells[hash_position] = Cell.new({:x => column, :y => row}, cell_state, self)
       end
     end
