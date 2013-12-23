@@ -6,9 +6,16 @@ class Game
     puts "Enter number of rows(0-50 is best)"
     row = gets.chomp.to_i
     puts "Enter number of columns(0-100 is best)"
-    columns = gets.chomp.to_i
+    column = gets.chomp.to_i
 
-    board = Board.new(row, columns, 0.5)
+    if row > 50 || column > 150 || (row || column < 0)
+      puts "Please choose a non-negative value of a sensible size"
+      sleep 2.0
+      board = Board.new(50, 150, 0.5)
+    else
+      board = Board.new(row, columns, 0.5)
+    end
+
     board.start
   end
 end
