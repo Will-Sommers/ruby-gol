@@ -2,18 +2,27 @@ require 'pry'
 
 
 class Game
-  def initialize
-    puts "Enter number of rows(0-50 is best)"
-    row = gets.chomp.to_i
-    puts "Enter number of columns(0-100 is best)"
-    column = gets.chomp.to_i
+  attr_accessor :row_count, :column_count
 
-    if row > 50 || column > 150 || (row || column < 0)
+  def initialize
+    get_dimensions
+    create_board
+  end
+
+  def get_dimensions
+    puts "Enter number of rows(0-50 is best)"
+    @row_count = gets.chomp.to_i
+    puts "Enter number of columns(0-100 is best)"
+    @column_count = gets.chomp.to_i
+  end
+
+  def create_board
+    if @row_count > 50 || @column_count > 150 || ((@row_count || @column_count) < 0)
       puts "Please choose a non-negative value of a sensible size"
       sleep 2.0
       board = Board.new(50, 150, 0.5)
     else
-      board = Board.new(row, columns, 0.5)
+      board = Board.new(@row_count, @column_count, 0.5)
     end
 
     board.start
