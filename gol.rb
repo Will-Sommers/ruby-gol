@@ -188,8 +188,7 @@ class Cell
 
     self.neighbors = possible_neighbors
       .select { |x, y|
-        x >= 0 && (x < board.columns)
-      }.select { |x, y|
+        x >= 0 && (x < board.columns) &&
         y >= 0 && (y < board.rows)
       }.map { |coords|
         Board.hash_position_helper(coords)
