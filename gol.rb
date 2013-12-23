@@ -17,11 +17,11 @@ class Board
   end
 
   def run_game_loop
-    i = 1
+    turn_number = 1
     loop do
       draw_next_board
-      draw_game_state_information(i)
-      i += 1
+      draw_game_state_information(turn_number)
+      turn_number += 1
       sleep 0.1
     end
   end
