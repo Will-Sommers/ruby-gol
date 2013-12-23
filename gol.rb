@@ -183,8 +183,8 @@ class Cell
 
   def find_and_store_neighbors
     possible_neighbors = [[x_coord - 1, y_coord + 1], [x_coord, y_coord + 1], [x_coord + 1, y_coord + 1],
-            [x_coord - 1, y_coord],                             [x_coord + 1, y_coord],
-            [x_coord - 1, y_coord - 1], [x_coord, y_coord - 1], [x_coord + 1, y_coord - 1]]
+                          [x_coord - 1, y_coord],                             [x_coord + 1, y_coord],
+                          [x_coord - 1, y_coord - 1], [x_coord, y_coord - 1], [x_coord + 1, y_coord - 1]]
 
     self.neighbors = possible_neighbors
       .select { |x, y|
