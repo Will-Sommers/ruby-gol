@@ -214,31 +214,17 @@ describe 'game of life' do
 
   context "board" do
 
-    let(:rows) { 10 }
-    let(:columns) { 10  }
-    subject { Board.new(rows, columns, 0.5) }
 
     context "setup" do
 
       it "creates the number of live cells according the density given" do
-        initial_cells = subject.total_cells * subject.density
-        subject.assign_cells
-        expect(subject.live_cells.count).to eql(initial_cells.to_i)
       end
 
       it "correctly assigns each cell a count of its neighbors" do
-        subject.cells = []
-        cell_positions = [[0, 0], [0, 1]]
-        cell_positions.each { |x, y| subject.cells << Cell.new(x, y) }
-        subject.assign_neighbors_to_cells
-        expect(subject.cells.first.neighbors_count).to eql(1)
       end
     end
 
     context "game mechanics" do
-      it "requires the number of live cells and dead cells to add up to total cells" do
-        expect(subject.dead_cells + subject.live_cells).to eql(subject.total_cellscount)
-      end
     end
 
     context "runs the game taking into account the previous board" do
@@ -247,48 +233,27 @@ describe 'game of life' do
 
   context "cell" do
 
-    subject { Cell.new(1, 1) }
-
     context "when living" do
 
       before do
-        subject.state = 'live'
       end
 
       it "live cell with fewer than two live neighbours dies, as if caused by under-population." do
-        subject.neighbors_count = 0
-        subject.determine_next_state
-        expect(subject.state).to eql('dead')
       end
 
       it "live cell with two or three live neighbours lives on to the next generation." do
-        subject.neighbors_count = 2
-        subject.determine_next_state
-        expect(subject.state).to eql('live')
       end
 
       it "cell with more than three live neighbours dies, as if by overcrowding." do
-        subject.neighbors_count = 4
-        subject.determine_next_state
-        expect(subject.state).to eql('dead')
       end
     end
 
     context  "when dead" do
-      before do
-        subject.state = 'dead'
-      end
 
       it "cell with exactly three live neighbours becomes a live cell, as if by reproduction." do
-        subject.neighbors_count = 3
-        subject.determine_next_state
-        expect(subject.state).to eql('live')
       end
 
       it "cell with something other than three live neighbors dies" do
-        subject.neighbors_count = 1
-        subject.determine_next_state
-        expect(subject.state).to eql('dead')
       end
     end
   end
