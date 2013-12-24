@@ -10,14 +10,14 @@ class Game
   end
 
   def get_dimensions
-    puts "Enter number of rows(0-50 is best)"
+    puts "Enter number of rows(20-50 is best)"
     @row_count = gets.chomp.to_i
-    puts "Enter number of columns(0-100 is best)"
+    puts "Enter number of columns(20-100 is best)"
     @column_count = gets.chomp.to_i
   end
 
   def create_board
-    if @row_count > 50 || @column_count > 150 || ((@row_count || @column_count) < 0)
+    if @row_count > 50 || @column_count > 150 || ((@row_count || @column_count) <= 0)
       puts "Please choose a non-negative value of a sensible size"
       sleep 2.0
       board = Board.new(50, 150, 0.5)
