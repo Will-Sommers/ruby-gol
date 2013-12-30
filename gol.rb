@@ -17,7 +17,7 @@ class Game
   end
 
   def create_board
-    if @row_count > 50 || @column_count > 150 || ((@row_count || @column_count) <= 0)
+    if @row_count > 50 || @column_count > 150 || (@row_count <= 0 || @column_count <= 0)
       puts "Please choose a non-negative value of a sensible size"
       sleep 2.0
       board = Board.new(50, 150, 0.5)
