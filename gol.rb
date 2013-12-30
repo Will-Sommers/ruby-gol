@@ -32,7 +32,9 @@ end
 
 class Board
 
-  attr_accessor :rows, :columns, :density, :cells, :live_cell_count
+
+  attr_reader :rows, :columns, :density, :cells
+  attr_accessor :live_cell_count
 
   def initialize(rows, columns, density)
     @rows = rows
@@ -211,6 +213,16 @@ Game.new()
 require 'rspec'
 
 describe 'game of life' do
+
+  context "game" do
+    it "does not create a board with a zero or negative width" do
+
+    end
+
+    it "does not create a board with a zero or negative height" do
+
+    end
+  end
 
   context "board" do
 
