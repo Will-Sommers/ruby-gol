@@ -42,10 +42,10 @@ class Board
     @columns = columns
     @density = density
     @cells = {}
+    initialize_board
   end
 
   def start
-    initialize_board
     print_board
     run_game_loop
   end

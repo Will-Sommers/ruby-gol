@@ -1,5 +1,6 @@
 require 'rspec'
 require '/Users/wls/code/gol/ruby-gol/gol.rb'
+require 'pry'
 
 describe 'game of life' do
 
@@ -35,12 +36,15 @@ describe 'game of life' do
     end
   end
 
-  context "board" do
-
+  context "board", focus: true do
 
     context "setup" do
 
+      let(:board) { Board.new(50, 150, 0.5) }
+
       it "creates the number of live cells according the density given" do
+        alive_cells =  board.cells.select { |key, cell| cell.alive? }.size
+        expect(board.live_cell_count).to eq(alive_cells)
       end
 
       it "correctly assigns each cell a count of its neighbors" do
