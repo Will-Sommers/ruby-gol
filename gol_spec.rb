@@ -39,22 +39,21 @@ describe 'game of life' do
   context "board", focus: true do
 
     context "setup" do
-
-      let(:board) { Board.new(50, 150, 0.5) }
-
       it "creates the number of live cells according the density given" do
+        board = Board.new(50, 150, 0.5)
         alive_cells =  board.cells.select { |key, cell| cell.alive? }.size
         expect(board.live_cell_count).to eq(alive_cells)
       end
 
       it "correctly assigns each cell a count of its neighbors" do
+        board = Board.new(10,10, 1)
+        cell = board.cells.first[1] # get the cell not the hash key
+        live_cells = cell.neighbors.select { |n| board.cells[n].alive? }.size
+        expect(live_cells).to eq(cell.neighbors.size)
       end
     end
 
     context "game mechanics" do
-    end
-
-    context "runs the game taking into account the previous board" do
     end
   end
 
