@@ -1,8 +1,7 @@
 require 'pry'
 
-
 class Game
-  attr_accessor :row_count, :column_count
+  attr_accessor :row_count, :column_count, :board
 
   def initialize
     get_dimensions
@@ -20,12 +19,14 @@ class Game
     if @row_count > 50 || @column_count > 150 || (@row_count <= 0 || @column_count <= 0)
       puts "Please choose a non-negative value of a sensible size"
       sleep 2.0
-      board = Board.new(50, 150, 0.5)
+      @board = Board.new(50, 150, 0.5)
     else
-      board = Board.new(@row_count, @column_count, 0.5)
+      @board = Board.new(@row_count, @column_count, 0.5)
     end
+  end
 
-    board.start
+  def start_board
+    @board.start
   end
 end
 
@@ -207,68 +208,7 @@ class Cell
   end
 end
 
-
-Game.new()
-
-require 'rspec'
-
-describe 'game of life' do
-
-  context "game" do
-    it "does not create a board with a zero or negative width" do
-
-    end
-
-    it "does not create a board with a zero or negative height" do
-
-    end
-  end
-
-  context "board" do
-
-
-    context "setup" do
-
-      it "creates the number of live cells according the density given" do
-      end
-
-      it "correctly assigns each cell a count of its neighbors" do
-      end
-    end
-
-    context "game mechanics" do
-    end
-
-    context "runs the game taking into account the previous board" do
-    end
-  end
-
-  context "cell" do
-
-    context "when living" do
-
-      before do
-      end
-
-      it "live cell with fewer than two live neighbours dies, as if caused by under-population." do
-      end
-
-      it "live cell with two or three live neighbours lives on to the next generation." do
-      end
-
-      it "cell with more than three live neighbours dies, as if by overcrowding." do
-      end
-    end
-
-    context  "when dead" do
-
-      it "cell with exactly three live neighbours becomes a live cell, as if by reproduction." do
-      end
-
-      it "cell with something other than three live neighbors dies" do
-      end
-    end
-  end
+def load_game
+  game = Game.new()
+  game.start_board
 end
-
-
