@@ -41,8 +41,7 @@ class Board
     @rows = rows
     @columns = columns
     @density = density
-    @cells = {}
-    initialize_board
+    @cells = initialize_board
   end
 
   def start
@@ -62,14 +61,18 @@ class Board
 
   def initialize_board
     initial_live_cells = place_initial_live_cells
+    initial_board = {}
+
     (0...@rows).each do |row|
       (0...@columns).each do |column|
         hash_position = Board.hash_position_helper([column.to_s, row.to_s])
 
         cell_state = initial_live_cells.has_key?(hash_position)  ? 'alive' : 'dead'
-        @cells[hash_position] = Cell.new({:x => column, :y => row}, cell_state, self)
+        initial_board[hash_position] = Cell.new({:x => column, :y => row}, cell_state, self)
       end
     end
+
+    return cells
   end
 
   def place_initial_live_cells
