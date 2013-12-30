@@ -72,7 +72,7 @@ class Board
       end
     end
 
-    return cells
+    return initial_board
   end
 
   def place_initial_live_cells
