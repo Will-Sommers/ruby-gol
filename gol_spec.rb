@@ -5,16 +5,33 @@ describe 'game of life' do
 
   context "game" do
 
-    it "is not nil" do
-      game = Game.new
+    let(:game) { Game.new }
+
+    before do
+      game.row_count = 10
+      game.column_count = 10
+    end
+
+    it "is not nil when initiated" do
       expect(game).not_to eq(nil)
     end
 
-    it "does not create a board with a zero or negative width" do
+    it "creates a board with a default(50) width when given a zero/neg width" do
+      game.column_count = -10
+      board = game.create_board
+      expect(board.columns).to eq(150)
     end
 
-    it "does not create a board with a zero or negative height" do
+    it "creates a board with a default(150) height when given a zero/neg height" do
+      game.row_count = -10
+      board = game.create_board
+      expect(board.rows).to eq(50)
+    end
 
+    it "creates a 50x150 board when given two negative dimensions" do
+      game.row_count = -10
+      board = game.create_board
+      expect([board.rows, board.columns]).to eq([50, 150])
     end
   end
 
