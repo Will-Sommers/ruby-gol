@@ -141,16 +141,16 @@ end
 
 class Cell
 
-  attr_accessor :x_coord, :y_coord, :state,
-    :live_neighbors_count, :next_state, :neighbors,
-    :board
+  attr_reader :x_coord, :y_coord, :board, :neighbors
+
+  attr_accessor :live_neighbors_count, :state, :next_state
 
   def initialize(coords, state, board)
     @x_coord = coords[:x]
     @y_coord = coords[:y]
     @state = state
     @board = board
-    find_and_store_neighbors
+    @neighbors = find_and_store_neighbors
   end
 
   def assign_next_state
@@ -188,7 +188,7 @@ class Cell
                           [x_coord - 1, y_coord],                             [x_coord + 1, y_coord],
                           [x_coord - 1, y_coord - 1], [x_coord, y_coord - 1], [x_coord + 1, y_coord - 1]]
 
-    self.neighbors = possible_neighbors
+    possible_neighbors
       .select { |x, y|
         x >= 0 && (x < board.columns) &&
         y >= 0 && (y < board.rows)
