@@ -52,10 +52,6 @@ describe 'game of life' do
         expect(live_cells).to eq(cell.neighbors.size)
       end
     end
-
-    context "game mechanics" do
-      ## Add more here
-    end
   end
 
   context "cell" do
