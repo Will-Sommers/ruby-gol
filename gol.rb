@@ -1,9 +1,12 @@
 require 'pry'
 
 class Game
+  attr_reader :is_test
+
   attr_accessor :row_count, :column_count, :board
 
-  def initialize
+  def initialize(is_test=false)
+    @is_test = is_test
     get_dimensions
     create_board
   end
@@ -18,7 +21,7 @@ class Game
   def create_board
     if @row_count > 50 || @column_count > 150 || (@row_count <= 0 || @column_count <= 0)
       puts "Please choose a non-negative value of a sensible size"
-      sleep 2.0
+      sleep 2.0 if not @is_test
       @board = Board.new(50, 150, 0.5)
     else
       @board = Board.new(@row_count, @column_count, 0.5)

@@ -6,7 +6,7 @@ describe 'game of life' do
 
   context "game" do
 
-    let(:game) { Game.new }
+    let(:game) { Game.new(is_test=true) }
 
     before do
       game.row_count = 10
@@ -36,7 +36,7 @@ describe 'game of life' do
     end
   end
 
-  context "board", focus: true do
+  context "board" do
 
     context "setup" do
       it "creates the number of live cells according the density given" do
@@ -54,6 +54,7 @@ describe 'game of life' do
     end
 
     context "game mechanics" do
+      ## Add more here
     end
   end
 
@@ -61,25 +62,64 @@ describe 'game of life' do
 
     context "when living" do
 
+      let(:board) { Board.new(3, 3, 0) }
+
       before do
+        @cell = board.cells[:"1-1"] # has 9 neighbors
+        @cell.state = "alive"
       end
 
       it "live cell with fewer than two live neighbours dies, as if caused by under-population." do
+        board.get_live_cell_neighbor_count
+        @cell.determine_next_state
+
+        expect(@cell.next_state).to eq("dead")
       end
 
       it "live cell with two or three live neighbours lives on to the next generation." do
+        @cell.neighbors.take(2).each do |key|
+          board.cells[key].state = "alive"
+        end
+
+        board.get_live_cell_neighbor_count
+        @cell.determine_next_state
+        expect(@cell.next_state).to eq("alive")
       end
 
       it "cell with more than three live neighbours dies, as if by overcrowding." do
+        @cell.neighbors.take(5).each do |key|
+          board.cells[key].state = "alive"
+        end
+
+        board.get_live_cell_neighbor_count
+        @cell.determine_next_state
+        expect(@cell.next_state).to eq("dead")
       end
     end
 
     context  "when dead" do
 
-      it "cell with exactly three live neighbours becomes a live cell, as if by reproduction." do
+      let(:board) { Board.new(3, 3, 0) }
+
+      before do
+        board.cells.each { |key, cell| cell.state = "alive" }
+        @cell = board.cells[:"0-0"] # has exactly 3 live neighbors
+        @cell.state = "dead"
       end
 
-      it "cell with something other than three live neighbors dies" do
+      it "cell with exactly three live neighbours becomes a live cell, as if by reproduction." do
+        board.get_live_cell_neighbor_count
+
+        @cell.determine_next_state
+        expect(@cell.next_state).to eq("alive")
+      end
+
+      it "cell with something other than three live neighbors remains dead" do
+        board.cells[:"0-1"].state = "dead"
+        board.get_live_cell_neighbor_count
+
+        @cell.determine_next_state
+        expect(@cell.next_state).to eq("dead")
       end
     end
   end
