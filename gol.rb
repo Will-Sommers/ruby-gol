@@ -9,10 +9,7 @@ class Game
     @is_test = is_test
     ask_for_multiple_board_game
     get_dimensions
-    @boards = []
-    @boards_count.times do
-      @boards << create_board
-    end
+    @boards = @boards_count.times.map { create_board }
   end
 
   def ask_for_multiple_board_game
