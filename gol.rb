@@ -7,8 +7,17 @@ class Game
 
   def initialize(is_test=false)
     @is_test = is_test
+    ask_for_multiple_board_game
     get_dimensions
-    create_board
+    @boards = []
+    @boards_count.times do
+      @boards << create_board
+    end
+  end
+
+  def ask_for_multiple_board_game
+    puts "How many boards would you like to render?"
+    @boards_count = gets.chomp.to_i
   end
 
   def get_dimensions
@@ -22,14 +31,26 @@ class Game
     if @row_count > 50 || @column_count > 150 || (@row_count <= 0 || @column_count <= 0)
       puts "Please choose a non-negative value of a sensible size"
       sleep 2.0 if not @is_test
-      @board = Board.new(50, 150, 0.5)
+      Board.new(50, 150, 0.5)
     else
-      @board = Board.new(@row_count, @column_count, 0.5)
+      Board.new(@row_count, @column_count, 0.5)
     end
   end
 
   def start_board
-    @board.start
+    @boards.each(&:print_board)
+
+    turn_number = 1
+    loop do
+      @boards.each do |b|
+        b.draw_next_board
+        b.draw_game_state_information(turn_number)
+        puts "\n\n"
+      end
+      turn_number += 1
+      sleep 0.1
+      puts "\e[H\e[2J"
+    end
   end
 end
 
@@ -45,21 +66,6 @@ class Board
     @columns = columns
     @density = density
     @cells = initialize_board
-  end
-
-  def start
-    print_board
-    run_game_loop
-  end
-
-  def run_game_loop
-    turn_number = 1
-    loop do
-      draw_next_board
-      draw_game_state_information(turn_number)
-      turn_number += 1
-      sleep 0.1
-    end
   end
 
   def initialize_board
@@ -125,7 +131,6 @@ class Board
   def print_board
     # Clears the terminal -- hacky
     board = build_board
-    puts "\e[H\e[2J"
     print board
   end
 
@@ -218,3 +223,5 @@ def load_game
   game = Game.new()
   game.start_board
 end
+
+load_game
